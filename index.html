@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard Monitoring Kelas Informatika</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"/>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 
+             dark:from-slate-900 dark:to-slate-800
+             min-h-screen text-slate-800 dark:text-slate-200">
+
+<!-- ================= NAVBAR ================= -->
+<header class="sticky top-0 z-50 border-b border-white/20 glass">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight">
+        Dashboard Monitoring Kelas Informatika
+      </h1>
+      <p class="text-sm opacity-70">
+        Enterprise Monitoring System
+      </p>
+    </div>
+
+    <button id="themeToggle"
+      class="w-11 h-11 rounded-full glass border border-white/20 flex items-center justify-center hover:scale-105 active:scale-95">
+      🌗
+    </button>
+
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-6 py-10 space-y-10">
+
+<!-- ================= STAT CARDS ================= -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+<div class="glass border border-white/20 rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+  <p class="text-sm opacity-70">Total Siswa</p>
+  <div id="statTotal" class="text-5xl font-bold mt-3 skeleton h-12 w-20 rounded"></div>
+</div>
+
+<div class="glass border border-white/20 rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+  <p class="text-sm opacity-70">Siswa Informatika</p>
+  <div id="statInf" class="text-5xl font-bold mt-3 skeleton h-12 w-20 rounded"></div>
+</div>
+
+<div class="glass border border-white/20 rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+  <p class="text-sm opacity-70">Non Informatika</p>
+  <div id="statNonInf" class="text-5xl font-bold mt-3 skeleton h-12 w-20 rounded"></div>
+</div>
+
+</section>
+
+<!-- ================= CHARTS ================= -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+  <!-- ================= PIE INFORMATIKA ================= -->
+  <div class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
+    <h3 class="mb-4 text-lg font-semibold">
+      Distribusi Informatika
+    </h3>
+    <div class="skeleton h-12 rounded-xl mb-4"></div>
+    <canvas id="pieInf"></canvas>
+  </div>
+
+  <!-- ================= PIE NON INFORMATIKA ================= -->
+  <div class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
+    <h3 class="mb-4 text-lg font-semibold">
+      Distribusi Non Informatika
+    </h3>
+    <div class="skeleton h-12 rounded-xl mb-4"></div>
+    <canvas id="pieNonInf"></canvas>
+  </div>
+
+  <!-- ================= BAR CHART CARD ================= -->
+  <div class="glass border border-white/20 rounded-3xl p-8 shadow-xl lg:col-span-2">
+
+    <!-- HEADER FLEX -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+
+      <div>
+        <h3 class="text-lg font-semibold">
+          Progres Tugas per Kelas Informatika
+        </h3>
+        <p class="text-sm opacity-70">
+          Monitoring status pengumpulan tugas
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4">
+
+        <select id="filterTingkat"
+          onchange="setTingkat(this.value)"
+          class="glass border border-white/20 rounded-xl px-4 py-2 text-sm w-[120px]">
+          <option value="all">Semua</option>
+          <option value="x - ">X</option>
+          <option value="xi - ">XI</option>
+          <option value="xii - ">XII</option>
+        </select>
+
+        <div class="relative glass border border-white/20 rounded-full p-1 w-[280px] flex text-sm font-medium">
+
+          <div id="indicator"
+            class="segment-indicator bg-white dark:bg-slate-700 shadow-md transition-all duration-300 ease-in-out">
+          </div>
+
+          <button class="flex-1 py-2 relative z-10"
+            onclick="setMode(0)">Individu</button>
+
+          <button class="flex-1 py-2 relative z-10"
+            onclick="setMode(1)">Kelompok</button>
+
+          <button class="flex-1 py-2 relative z-10"
+            onclick="setMode(2)">Total</button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Skeleton Loader -->
+    <div class="skeleton h-12 rounded-xl mb-4"></div>
+
+    <!-- Chart Wrapper -->
+    <div class="w-full overflow-hidden">
+      <div class="relative w-full h-[420px]">
+        <canvas id="barKelas"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= TABLE ================= -->
+<section class="glass border border-white/20 rounded-3xl p-8 shadow-xl">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+
+    <h3 class="mb-2 text-lg font-semibold">Detail Tugas Siswa Informatika</h3>
+
+    <div class="flex items-center gap-3">
+      <select id="filterTingkatTable" class="glass border border-white/20 rounded-xl px-4 py-2 text-sm w-[140px]">
+        <option value="all">Semua</option>
+        <option value="x">Kelas X</option>
+        <option value="xi">Kelas XI</option>
+        <option value="xii">Kelas XII</option>
+      </select>
+    </div>
+
+  </div>
+  <div class="w-full overflow-hidden">
+    <table id="tableSiswa" class="display w-full text-sm"></table>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="js/apis.js"></script> 
+<script src="js/states.js"></script> 
+<script src="js/stats.js"></script> 
+<script src="js/charts.js"></script> 
+<script src="js/tables.js"></script> 
+<script src="js/dashboards.js"></script>
+
+</body>
+</html>
