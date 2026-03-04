@@ -4,7 +4,10 @@
  * ========================================
  */
 
-const API = {
+import { CONFIG } from './config.js';
+
+// Export API object
+export const API = {
   token: null,
   lastRequestTime: 0,
   minRequestInterval: 1000, // Minimum 1 second between requests
@@ -180,7 +183,11 @@ const API = {
   }
 };
 
-// Backward compatibility alias
-const apiFetch = function(mode, params) {
+// Backward compatibility alias - export as default and window
+export const apiFetch = function(mode, params) {
   return API.fetch(mode, params);
 };
+
+// Make available globally for backward compatibility
+window.API = API;
+window.apiFetch = apiFetch;

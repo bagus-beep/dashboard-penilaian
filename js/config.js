@@ -5,7 +5,8 @@
  * ========================================
  */
 
-const CONFIG = {
+// Export all config and utility functions
+export const CONFIG = {
   // API Configuration
   API_URL: "https://script.google.com/macros/s/AKfycbz--KXVT14udPAiAHSDJlKXdfWD196WBfI-GOl6M4mXHcI5I7yPDvRka27dILi4GM2T/exec",
   ORIGIN_KEY: "VERCEL_FRONTEND_2026",
@@ -105,7 +106,7 @@ const CONFIG = {
 /**
  * Get current chart colors based on theme
  */
-function getChartColors() {
+export function getChartColors() {
   const isDark = document.documentElement.classList.contains('dark');
   return isDark ? CONFIG.CHART_COLORS_DARK : CONFIG.CHART_COLORS_LIGHT;
 }
@@ -113,7 +114,7 @@ function getChartColors() {
 /**
  * Get pie chart colors based on theme
  */
-function getPieChartColors() {
+export function getPieChartColors() {
   const isDark = document.documentElement.classList.contains('dark');
   return isDark ? CONFIG.PIE_COLORS_DARK : CONFIG.PIE_COLORS_LIGHT;
 }
@@ -121,12 +122,12 @@ function getPieChartColors() {
 /**
  * Format number to Indonesian locale
  */
-const formatNumber = n => n.toLocaleString("id-ID");
+export const formatNumber = n => n.toLocaleString("id-ID");
 
 /**
  * Debounce utility
  */
-function debounce(func, wait) {
+export function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
     const later = () => {
@@ -145,7 +146,7 @@ function debounce(func, wait) {
 /**
  * Check if dark mode is active
  */
-function isDarkMode() {
+export function isDarkMode() {
   return document.documentElement.classList.contains('dark');
 }
 
@@ -153,7 +154,7 @@ function isDarkMode() {
  * Get theme-aware colors for charts
  * Returns an object with all theme-dependent colors
  */
-function getThemeColors() {
+export function getThemeColors() {
   const isDark = isDarkMode();
   
   return {
@@ -188,7 +189,7 @@ function getThemeColors() {
 /**
  * Toggle theme and return new state
  */
-function toggleThemeState() {
+export function toggleThemeState() {
   document.documentElement.classList.toggle('dark');
   const isDark = isDarkMode();
   localStorage.theme = isDark ? 'dark' : 'light';
@@ -198,7 +199,7 @@ function toggleThemeState() {
 /**
  * Initialize theme from localStorage
  */
-function initThemeState() {
+export function initThemeState() {
   const isDark = localStorage.theme === 'dark';
   if (isDark) {
     document.documentElement.classList.add('dark');

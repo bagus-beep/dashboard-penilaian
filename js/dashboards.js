@@ -4,8 +4,14 @@
  * ========================================
  */
 
-// Toast notification system
-const Toast = {
+import { CONFIG } from './config.js';
+import { apiFetch } from './apis.js';
+import { showChartSkeletons, hideChartSkeletons, renderCharts } from './charts.js';
+import { renderStats } from './stats.js';
+import { initView } from './tables.js';
+
+// Toast notification system - export for use in other modules
+export const Toast = {
   container: null,
   
   init() {
@@ -125,8 +131,8 @@ const Toast = {
   }
 };
 
-// Error handler
-function handleApiError(error, context) {
+// Error handler - export for use in other modules
+export function handleApiError(error, context) {
   if (!context) context = '';
   const errorMessage = error.message || error.toString();
   const contextStr = context ? ' (' + context + ')' : '';
@@ -161,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
 /**
  * Load complete dashboard data
  */
-async function loadDashboard() {
+export async function loadDashboard() {
   try {
     // Show skeleton loaders for charts while fetching data
     showChartSkeletons();
@@ -176,11 +182,7 @@ async function loadDashboard() {
     Toast.success('Data berhasil dimuat!', 2000);
     
     // Initialize table/card view based on screen size
-    if (typeof initView === 'function') {
-      initView();
-    } else {
-      renderTable();
-    }
+    initView();
 
   } catch (error) {
     handleApiError(error, 'memuat dashboard');
@@ -192,7 +194,7 @@ async function loadDashboard() {
 /**
  * Load summary data only (for periodic refresh)
  */
-async function loadSummary() {
+export async function loadSummary() {
   try {
     const data = await apiFetch("dashboard_summary");
     renderStats(data.summary);
@@ -208,3 +210,10 @@ async function loadSummary() {
 function showErrorNotification(message) {
   Toast.error(message);
 }
+
+// Make functions available globally for backward compatibility
+window.Toast = Toast;
+window.loadDashboard = loadDashboard;
+window.loadSummary = loadSummary;
+window.handleApiError = handleApiError;
+window.showErrorNotification = showErrorNotification;

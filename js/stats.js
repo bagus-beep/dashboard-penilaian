@@ -4,6 +4,8 @@
  * ========================================
  */
 
+import { CONFIG, formatNumber } from './config.js';
+
 // Track if skeleton has been cleared
 let statSkeletonCleared = false;
 
@@ -11,7 +13,7 @@ let statSkeletonCleared = false;
  * Clear stat skeletons and prepare for animation
  * Uses the same delay as charts (CONFIG.ANIMATION.SKELETON = 2500ms) for consistency
  */
-function clearStatSkeletons() {
+export function clearStatSkeletons() {
   if (statSkeletonCleared) return;
   
   const statTotal = document.getElementById("statTotal");
@@ -36,7 +38,7 @@ function clearStatSkeletons() {
  * Render statistics cards with animation
  * Note: Called AFTER data is successfully fetched
  */
-function renderStats(summary) {
+export function renderStats(summary) {
   if (!summary) {
     console.error("Summary tidak tersedia");
     return;
@@ -78,7 +80,7 @@ function renderStats(summary) {
 /**
  * Reset stat skeleton for refresh
  */
-function resetStatSkeletons() {
+export function resetStatSkeletons() {
   statSkeletonCleared = false;
   
   const statTotal = document.getElementById("statTotal");
@@ -121,3 +123,8 @@ function animateCount(element, start, end, duration) {
   
   window.requestAnimationFrame(step);
 }
+
+// Make functions available globally for backward compatibility
+window.clearStatSkeletons = clearStatSkeletons;
+window.renderStats = renderStats;
+window.resetStatSkeletons = resetStatSkeletons;

@@ -4,12 +4,15 @@
  * ========================================
  */
 
+import { CONFIG, getChartColors, getPieChartColors, getThemeColors } from './config.js';
+import { STATE, setCachedData, buildSubmissionDataset, filterByTingkat } from './states.js';
+
 // Theme colors are now managed centrally via getPieChartColors() and getThemeColors() in config.js
 
 /**
  * Show skeleton loaders for charts
  */
-function showChartSkeletons() {
+export function showChartSkeletons() {
   // Show pie chart skeletons by ID
   const pieInfSkeleton = document.getElementById('skeleton-pieInf');
   const pieNonInfSkeleton = document.getElementById('skeleton-pieNonInf');
@@ -35,7 +38,7 @@ function showChartSkeletons() {
  * Hide skeleton loaders for charts
  * Uses same delay as stats (CONFIG.ANIMATION.SKELETON = 2500ms) for consistent UX
  */
-function hideChartSkeletons() {
+export function hideChartSkeletons() {
   // Hide pie chart skeletons
   const pieInfSkeleton = document.getElementById('skeleton-pieInf');
   const pieNonInfSkeleton = document.getElementById('skeleton-pieNonInf');
@@ -61,7 +64,7 @@ function hideChartSkeletons() {
  * Render all charts
  * Called AFTER data is successfully fetched
  */
-function renderCharts(kelasData) {
+export function renderCharts(kelasData) {
   if (!Array.isArray(kelasData)) {
     console.error("kelasData bukan array");
     hideChartSkeletons();
@@ -198,7 +201,7 @@ function createOrUpdatePieChart(
 /**
  * Render Bar Chart
  */
-function renderBarChart() {
+export function renderBarChart() {
   if (!STATE.cachedKelasData.length) return;
 
   const canvas = document.getElementById("barKelas");
@@ -357,3 +360,9 @@ const percentagePlugin = {
     });
   }
 };
+
+// Make functions available globally for backward compatibility
+window.showChartSkeletons = showChartSkeletons;
+window.hideChartSkeletons = hideChartSkeletons;
+window.renderCharts = renderCharts;
+window.renderBarChart = renderBarChart;

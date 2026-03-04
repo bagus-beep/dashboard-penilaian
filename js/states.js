@@ -4,8 +4,10 @@
  * ========================================
  */
 
-// Centralized state object
-const STATE = {
+import { getChartColors, getPieChartColors, getThemeColors, initThemeState, toggleThemeState } from './config.js';
+
+// Export centralized state object
+export const STATE = {
   // Chart instances
   charts: {
     pieInf: null,
@@ -27,14 +29,14 @@ const STATE = {
   cachedKelasData: []
 };
 
-// Setter shortcuts with validation
-const setFilters = (key, value) => {
+// Export setter functions
+export const setFilters = (key, value) => {
   if (key in STATE.filters) {
     STATE.filters[key] = value;
   }
 };
 
-const setCachedData = (data) => {
+export const setCachedData = (data) => {
   STATE.cachedKelasData = Array.isArray(data) ? data : [];
 };
 
@@ -138,13 +140,17 @@ function initMobileMenu() {
 /**
  * Set submission mode (Individu/Kelompok/Total)
  */
-function setMode(modeIndex) {
+export function setMode(modeIndex) {
   if (modeIndex < 0 || modeIndex > 2) return;
   
   STATE.filters.mode = modeIndex;
   moveIndicator(modeIndex);
   updateModeButtons(modeIndex);
-  renderBarChart();
+  
+  // Trigger bar chart re-render - import and call from charts.js
+  if (typeof renderBarChart === 'function') {
+    renderBarChart();
+  }
 }
 
 /**
@@ -175,9 +181,15 @@ function updateModeButtons(activeIndex) {
 /**
  * Set tingkat filter
  */
-function setTingkat(value) {
+export function setTingkat(value) {
   STATE.filters.tingkat = value;
-  renderBarChart();
+  
+  // Trigger bar chart re-render
+  if (typeof renderBarChart === 'function') {
+    renderBarChart();
+  }
+  
+  // Reload table if exists
   if (STATE.table) {
     STATE.table.ajax.reload(null, true);
   }
@@ -190,7 +202,7 @@ function setTingkat(value) {
 /**
  * Build submission dataset based on mode
  */
-function buildSubmissionDataset(kelasInf, mode = 0) {
+export function buildSubmissionDataset(kelasInf, mode = 0) {
   if (!Array.isArray(kelasInf)) return [];
   
   const modeMap = {
@@ -214,7 +226,7 @@ function buildSubmissionDataset(kelasInf, mode = 0) {
 /**
  * Filter data by tingkat
  */
-function filterByTingkat(data, tingkat) {
+export function filterByTingkat(data, tingkat) {
   if (!Array.isArray(data)) return [];
   if (tingkat === "all") return data;
   
@@ -227,7 +239,7 @@ function filterByTingkat(data, tingkat) {
  * Update bar chart colors based on current theme
  * Uses centralized theme utilities for DRY principle
  */
-function updateChartTheme() {
+export function updateChartTheme() {
   const colors = getChartColors();
   const themeColors = getThemeColors();
   const chart = STATE.charts.bar;
@@ -248,12 +260,21 @@ function updateChartTheme() {
   }
 }
 
+// Make functions available globally for backward compatibility
+window.setMode = setMode;
+window.setTingkat = setTingkat;
+window.buildSubmissionDataset = buildSubmissionDataset;
+window.filterByTingkat = filterByTingkat;
+window.updateChartTheme = updateChartTheme;
+window.updateAllCharts = updateAllCharts;
+
 // ========================================
 // BACKWARD COMPATIBILITY
 // ========================================
 
-// Alias for format function
-const format = formatNumber;
+// Alias for format function - import from config
+import { formatNumber as format } from './config.js';
+window.format = format;
 
 // Expose chart instances to window for backward compatibility
 Object.defineProperty(window, 'pieInfChart', {

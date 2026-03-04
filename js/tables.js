@@ -4,8 +4,12 @@
  * ========================================
  */
 
+import { CONFIG } from './config.js';
+import { apiFetch } from './apis.js';
+import { STATE } from './states.js';
+
 // Status badge configuration
-const STATUS_CONFIG = {
+export const STATUS_CONFIG = {
   colors: {
     sudah: {
       bg: 'bg-green-100',
@@ -26,8 +30,8 @@ const STATUS_CONFIG = {
   }
 };
 
-// Card list state
-const CARD_LIST_STATE = {
+// Card list state - export for use in other modules
+export const CARD_LIST_STATE = {
   data: [],
   page: 0,
   pageSize: 20,
@@ -124,7 +128,7 @@ function hideTableSkeleton() {
 /**
  * Render DataTable (Desktop/Tablet)
  */
-function renderTable() {
+export function renderTable() {
   const tableElement = $("#tableSiswa");
   if (!tableElement.length) return;
 
@@ -310,6 +314,7 @@ function removeLoadMoreSkeleton() {
   const skeletons = document.querySelectorAll('.load-more-skeleton');
   skeletons.forEach(skeleton => skeleton.remove());
 }
+
 /**
  * Reset card list state
  */
@@ -457,7 +462,7 @@ function initInfiniteScroll() {
 /**
  * Initialize view based on screen size
  */
-function initView() {
+export function initView() {
   const tableView = document.querySelector('.table-view');
   const cardListView = document.getElementById('cardListView');
   
@@ -500,6 +505,15 @@ function handleResize() {
   }
 }
 
+// Error handler - import from dashboards.js
+function handleApiError(error, context) {
+  if (typeof window.handleApiError === 'function') {
+    window.handleApiError(error, context);
+  } else {
+    console.error('API Error:', error, context);
+  }
+}
+
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', function() {
   // Initial render based on screen size
@@ -512,3 +526,12 @@ document.addEventListener('DOMContentLoaded', function() {
     resizeTimeout = setTimeout(handleResize, 250);
   });
 });
+
+// Make functions available globally for backward compatibility
+window.initView = initView;
+window.renderTable = renderTable;
+window.resetCardList = resetCardList;
+window.loadCardList = loadCardList;
+window.showTableSkeleton = showTableSkeleton;
+window.hideTableSkeleton = hideTableSkeleton;
+window.STATUS_CONFIG = STATUS_CONFIG;
